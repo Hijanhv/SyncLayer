@@ -1,8 +1,11 @@
+[install]
+cmds = ["npm install"]
+
 [build]
-cmd = "cd backend && npm install && npm run build"
+cmds = ["npm run build"]
 
 [start]
-cmd = "cd backend && npm start"
+cmd = "npm start"
 
 [variables]
 NODE_ENV = "production"
