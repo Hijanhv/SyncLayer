@@ -4,6 +4,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const createDatabasePool = () => {
+  if (process.env.DATABASE_URL) {
+    return mysql.createPool(process.env.DATABASE_URL);
+  }
+  
   return mysql.createPool({
     host: process.env.MYSQLHOST || process.env.MYSQL_HOST || 'localhost',
     port: parseInt(process.env.MYSQLPORT || process.env.MYSQL_PORT || '3306'),
