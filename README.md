@@ -79,16 +79,6 @@ This system uses a **10-second polling interval** instead of faster polling. Thi
 5. **Production-ready**: This is the standard for production sync systems
 6. **Cost-effective**: Works perfectly on free Google Cloud tier
 
-### 💡 Alternative Approaches:
-
-If you need < 1 second real-time sync:
-- Use **Google Apps Script triggers** (`onEdit`, `onChange`)
-- Implement **webhooks** instead of polling
-- Use **Google Pub/Sub** for event-driven architecture
-
-**Faster polling does NOT make it better—it just wastes resources.**
-
----
 
 ## 🔄 Sync Logic
 
