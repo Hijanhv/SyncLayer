@@ -14,7 +14,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// CORS configuration for production
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 let syncEngine: SyncEngine;
