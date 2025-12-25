@@ -7,6 +7,9 @@ nixPkgs = ["nodejs_20"]
 [build.nixpacksPlan.phases.install]
 cmds = ["npm install -g pnpm", "pnpm install"]
 
+[build.nixpacksPlan.phases.build]
+cmds = ["echo 'Skipping build'"]
+
 [deploy]
 startCommand = "pnpm start"
 restartPolicyType = "ON_FAILURE"
