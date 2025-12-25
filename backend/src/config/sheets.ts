@@ -5,8 +5,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const createSheetsClient = () => {
-  const keyPath = process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH || './service-account-key.json';
-  const credentials = JSON.parse(readFileSync(keyPath, 'utf-8'));
+  let credentials;
+  
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
+    credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+  } else {
+    const keyPath = process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH || './service-account-key.json';
+    credentials = JSON.parse(readFileSync(keyPath, 'utf-8'));
+  }
 
   const auth = new google.auth.GoogleAuth({
     credentials,
