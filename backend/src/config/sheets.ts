@@ -1,0 +1,21 @@
+import { google } from 'googleapis';
+import { readFileSync } from 'fs';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+export const createSheetsClient = () => {
+  const keyPath = process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH || './service-account-key.json';
+  const credentials = JSON.parse(readFileSync(keyPath, 'utf-8'));
+
+  const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+
+  return google.sheets({ version: 'v4', auth });
+};
+
+export const SHEET_ID = process.env.GOOGLE_SHEET_ID || '';
+export const SHEET_NAME = 'Sheet1';
+export const SHEET_RANGE = `${SHEET_NAME}!A:G`;

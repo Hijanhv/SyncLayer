@@ -1,0 +1,31 @@
+{
+  "name": "synclayer",
+  "version": "1.0.0",
+  "description": "Production-grade two-way sync between Google Sheets and MySQL",
+  "private": true,
+  "scripts": {
+    "setup": "chmod +x setup.sh && ./setup.sh",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "backend:dev": "cd backend && pnpm dev",
+    "backend:build": "cd backend && pnpm build",
+    "frontend:dev": "cd frontend && pnpm dev",
+    "frontend:build": "cd frontend && pnpm build",
+    "dev": "concurrently \"pnpm docker:up\" \"pnpm backend:dev\" \"pnpm frontend:dev\"",
+    "seed": "chmod +x seed-data.sh && ./seed-data.sh"
+  },
+  "keywords": [
+    "sync",
+    "google-sheets",
+    "mysql",
+    "real-time",
+    "saas",
+    "typescript"
+  ],
+  "author": "SyncLayer Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
