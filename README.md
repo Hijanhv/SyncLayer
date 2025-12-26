@@ -240,6 +240,133 @@ pnpm dev
 
 ---
 
+## 🚀 Deployment (Railway)
+
+### Live Deployment URLs
+
+- **Frontend:** https://athletic-acceptance-production-c0ad.up.railway.app
+- **Backend API:** https://synclayer-production.up.railway.app
+
+### Deployment Architecture
+
+The application is deployed on **Railway** with the following setup:
+
+```
+┌──────────────────────────────────────────────────────┐
+│                    Railway Platform                   │
+│                                                        │
+│  ┌─────────────────┐  ┌──────────────┐  ┌──────────┐ │
+│  │   Frontend      │  │   Backend    │  │  MySQL   │ │
+│  │   (Vite+React)  │  │  (Express)   │  │ Database │ │
+│  │   Port: 3000    │  │  Port: 8080  │  │          │ │
+│  └─────────────────┘  └──────────────┘  └──────────┘ │
+│          │                    │                │       │
+│          │                    │                │       │
+│  ┌───────────────────────────────────────────────┐    │
+│  │              Redis Cache                      │    │
+│  └───────────────────────────────────────────────┘    │
+└──────────────────────────────────────────────────────┘
+```
+
+### Deployment Configuration Files
+
+- **Root Dockerfile** - Multi-stage Docker build for production
+- **Backend Dockerfile** - Backend service container
+- **Frontend Dockerfile** - Frontend service with runtime API URL injection
+- **Environment Variables** - Managed in Railway dashboard
+
+### How It Works
+
+1. **Backend Service:**
+   - Runs Express server on port 8080
+   - Connected to Railway MySQL database
+   - Connected to Railway Redis instance
+   - Automatically syncs with Google Sheets every 10 seconds
+
+2. **Frontend Service:**
+   - Built React app served by `serve` package
+   - Automatically detects Railway domain and connects to backend
+   - Runtime API URL injection for environment-specific configuration
+   - CORS configured to accept requests from Railway domain
+
+3. **Data Flow:**
+   - Frontend makes API calls to backend
+   - Backend syncs data between MySQL and Google Sheets
+   - Redis queue manages background sync jobs
+   - All data persists in Railway MySQL database
+
+### Deploying Updates
+
+1. **Make changes locally**
+   ```bash
+   git add .
+   git commit -m "Your changes"
+   git push origin main
+   ```
+
+2. **Railway auto-deploys:**
+   - GitHub integration automatically triggers deployment
+   - Backend rebuilds and restarts
+   - Frontend rebuilds and redeploys
+   - Zero downtime with rolling updates
+
+3. **Check deployment status:**
+   - Visit Railway dashboard
+   - Go to Deployments tab
+   - Watch logs in real-time
+
+### Environment Variables on Railway
+
+The following variables are configured in Railway:
+
+**Backend:**
+- `GOOGLE_SHEET_ID` - Your Google Sheet ID
+- `GOOGLE_SERVICE_ACCOUNT_KEY` - Service account credentials (JSON)
+- `DATABASE_URL` - MySQL connection string (auto-provided)
+- `REDIS_URL` - Redis connection string (auto-provided)
+- `SYNC_INTERVAL_MS` - Polling interval (10000ms default)
+- `NODE_ENV` - Set to "production"
+
+**Frontend:**
+- `VITE_API_URL` - Backend URL (auto-detected at runtime)
+
+### Monitoring Production
+
+**Check Backend Health:**
+```bash
+curl https://synclayer-production.up.railway.app/health
+```
+
+**View Sync Logs:**
+```bash
+curl https://synclayer-production.up.railway.app/api/sync/logs
+```
+
+**View Queue Stats:**
+```bash
+curl https://synclayer-production.up.railway.app/api/sync/stats
+```
+
+### Troubleshooting Deployment
+
+**Frontend shows "No data":**
+1. Check browser console (F12) for API errors
+2. Verify `VITE_API_URL` is set in Railway variables
+3. Restart the frontend service
+
+**Backend not syncing:**
+1. Check Railway backend logs
+2. Verify Google Sheet ID is correct
+3. Verify service account has access to Sheet
+4. Check MySQL connection in logs
+
+**Connection refused errors:**
+1. Ensure `VITE_API_URL` environment variable is set
+2. Verify backend service is running
+3. Check network connectivity from frontend to backend
+
+---
+
 ## 🧪 Testing & Multiplayer Usage
 
 ### Google Sheet Access (Enabled ✅)
