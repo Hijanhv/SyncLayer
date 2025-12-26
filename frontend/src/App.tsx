@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import { API_BASE_URL, ENDPOINTS } from './config';
 
 interface SyncLog {
   timestamp: string;
@@ -37,7 +38,7 @@ function App() {
 
   const fetchLogs = async () => {
     try {
-      const response = await fetch('/api/sync/logs');
+      const response = await fetch(`${API_BASE_URL}${ENDPOINTS.SYNC_LOGS}`);
       const data = await response.json();
       setLogs(data.logs.reverse().slice(0, 10));
     } catch (error) {
@@ -47,7 +48,7 @@ function App() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/sync/stats');
+      const response = await fetch(`${API_BASE_URL}${ENDPOINTS.SYNC_STATS}`);
       const data = await response.json();
       setStats(data.stats);
     } catch (error) {
@@ -58,13 +59,13 @@ function App() {
   const fetchData = async () => {
     try {
       const [sheetRes, dbRes] = await Promise.all([
-        fetch('/api/data/sheet'),
-        fetch('/api/data/db'),
+        fetch(`${API_BASE_URL}${ENDPOINTS.SHEET_DATA}`),
+        fetch(`${API_BASE_URL}${ENDPOINTS.DB_DATA}`),
       ]);
-      
+
       const sheetData = await sheetRes.json();
       const dbData = await dbRes.json();
-      
+
       setSheetData(sheetData.rows);
       setDbData(dbData.rows);
     } catch (error) {
@@ -75,9 +76,9 @@ function App() {
   const triggerSync = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/sync/trigger', { method: 'POST' });
+      const response = await fetch(`${API_BASE_URL}${ENDPOINTS.TRIGGER_SYNC}`, { method: 'POST' });
       const data = await response.json();
-      
+
       if (data.success) {
         setTimeout(() => {
           fetchLogs();
@@ -113,15 +114,15 @@ function App() {
   const handleAddRecord = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email) return;
-    
+
     setFormLoading(true);
     try {
-      const response = await fetch('/api/data/db', {
+      const response = await fetch(`${API_BASE_URL}${ENDPOINTS.DB_DATA}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      
+
       if (response.ok) {
         setFormData({ name: '', email: '', status: 'active' });
         setTimeout(() => fetchData(), 500);

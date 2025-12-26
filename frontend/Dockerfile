@@ -1,21 +1,25 @@
+# Build stage
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-RUN npm install -g pnpm
+COPY package*.json ./
 
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile
+RUN npm install
 
 COPY . .
-RUN pnpm build
 
-FROM nginx:alpine
+RUN npm run build
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Production stage
+FROM node:20-alpine
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+WORKDIR /app
 
-EXPOSE 80
+RUN npm install -g serve
 
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist", "-l", "3000"]
