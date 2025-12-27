@@ -22,7 +22,12 @@ echo "✅ Prerequisites check passed"
 echo ""
 
 echo "🐳 Starting Docker containers..."
-docker-compose up -d
+# Try docker compose V2 first, fall back to docker-compose
+if docker compose version &> /dev/null; then
+    docker compose up -d
+else
+    docker-compose up -d
+fi
 
 echo "⏳ Waiting for services to be ready..."
 sleep 10

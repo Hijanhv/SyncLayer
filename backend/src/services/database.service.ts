@@ -9,6 +9,12 @@ export class DatabaseService {
     return d.toISOString().slice(0, 19).replace('T', ' ');
   }
 
+  // Generate unique ID that matches sheet format
+  private generateUniqueId(): string {
+    // Generate timestamp-based ID like sheets might use
+    return Date.now().toString();
+  }
+
   async getAllRows(): Promise<SyncRow[]> {
     const [rows] = await this.pool.query<mysql.RowDataPacket[]>(
       'SELECT * FROM sync_data ORDER BY id'
@@ -80,19 +86,39 @@ export class DatabaseService {
     }
   }
 
-  async createRow(data: Omit<SyncRow, 'id'>): Promise<void> {
-    // Get the next available ID
-    const [maxIdRow] = await this.pool.query<mysql.RowDataPacket[]>(
-      'SELECT COALESCE(MAX(CAST(id AS UNSIGNED)), 0) + 1 as next_id FROM sync_data'
-    );
-    const nextId = maxIdRow[0].next_id.toString();
+  async createRow(data: Omit<SyncRow, 'id'>): Promise<SyncRow> {
+    // Generate a proper unique ID
+    const id = this.generateUniqueId();
+    
+    const row: SyncRow = {
+      id,
+      name: data.name,
+      email: data.email,
+      status: data.status,
+      version: data.version,
+      updated_at: data.updated_at,
+      last_updated_by: data.last_updated_by,
+    };
 
     await this.pool.query(
       `INSERT INTO sync_data 
        (id, name, email, status, version, updated_at, last_updated_by)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [nextId, data.name, data.email, data.status, data.version, 
-       this.formatDateForMySQL(data.updated_at), data.last_updated_by]
+      [row.id, row.name, row.email, row.status, row.version, 
+       this.formatDateForMySQL(row.updated_at), row.last_updated_by]
+    );
+
+    return row;
+  }
+
+  async updateRow(id: string, data: Partial<SyncRow>): Promise<void> {
+    await this.pool.query(
+      `UPDATE sync_data 
+       SET name = ?, email = ?, status = ?, version = version + 1, 
+           updated_at = ?, last_updated_by = ?
+       WHERE id = ?`,
+      [data.name, data.email, data.status, 
+       this.formatDateForMySQL(new Date().toISOString()), 'db', id]
     );
   }
 
@@ -116,5 +142,9 @@ export class DatabaseService {
       updated_at: new Date(row.updated_at).toISOString(),
       last_updated_by: row.last_updated_by,
     };
+  }
+
+  async deleteRow(id: string): Promise<void> {
+    await this.pool.query('DELETE FROM sync_data WHERE id = ?', [id]);
   }
 }
