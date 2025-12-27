@@ -13,7 +13,14 @@ if (!apiUrl && typeof window !== 'undefined') {
   }
 }
 
-export const API_BASE_URL = apiUrl || 'http://localhost:8080';
+// config.ts - UPDATED VERSION
+console.log('🔧 Loading config...');
+console.log('Environment VITE_API_URL:', import.meta.env.VITE_API_URL);
+
+// Use the environment variable directly
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+console.log('API_BASE_URL:', API_BASE_URL);
 
 export const SYNC_INTERVAL = 5000;
 

@@ -4,6 +4,7 @@ import { DatabaseService } from './database.service.js';
 
 export class SyncEngine {
   private syncLogs: SyncLog[] = [];
+  private minLogInterval = 30000; // Only log every 30 seconds minimum
 
   constructor(
     private sheetService: SheetService,

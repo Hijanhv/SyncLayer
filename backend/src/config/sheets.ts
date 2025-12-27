@@ -22,6 +22,14 @@ export const createSheetsClient = () => {
   return google.sheets({ version: 'v4', auth });
 };
 
-export const SHEET_ID = process.env.GOOGLE_SHEET_ID || '';
+// Use GOOGLE_SHEETS_SHEET_ID to match your .env file
+export const SHEET_ID = process.env.GOOGLE_SHEETS_SHEET_ID || '';
 export const SHEET_NAME = 'Sheet1';
 export const SHEET_RANGE = `${SHEET_NAME}!A:G`;
+
+// Log for debugging
+console.log('📊 Sheets Config:', { 
+  SHEET_ID: SHEET_ID ? 'Set' : 'Not set',
+  SHEET_NAME,
+  SHEET_RANGE 
+});

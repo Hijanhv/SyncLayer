@@ -2,33 +2,30 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:8.0
+    image: mysql:8
     container_name: synclayer-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: synclayer
+      MYSQL_USER: synclayer
+      MYSQL_PASSWORD: synclayerpassword
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 20s
+      retries: 10
 
   redis:
-    image: redis:7-alpine
+    image: redis:alpine
     container_name: synclayer-redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
 volumes:
   mysql_data:

@@ -28,6 +28,13 @@ interface Stats {
 }
 
 function App() {
+  console.log('🚀 App component rendering');
+  console.log('Using API_BASE_URL:', API_BASE_URL);
+  
+  // Test each endpoint URL
+  console.log('Logs URL:', `${API_BASE_URL}${ENDPOINTS.SYNC_LOGS}`);
+  console.log('DB Data URL:', `${API_BASE_URL}${ENDPOINTS.DB_DATA}`);
+  console.log('Sheet Data URL:', `${API_BASE_URL}${ENDPOINTS.SHEET_DATA}`);
   const [logs, setLogs] = useState<SyncLog[]>([]);
   const [stats, setStats] = useState<Stats>({ waiting: 0, active: 0, completed: 0, failed: 0 });
   const [sheetData, setSheetData] = useState<SyncRow[]>([]);
