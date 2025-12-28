@@ -28,7 +28,7 @@ export interface SyncDiff {
 export interface SyncLog {
   timestamp: string;
   action: string;
-  source: 'sheet' | 'db';
+  source: 'sheet' | 'db' | 'system';
   rowsAffected: number;
   details: string;
 }

@@ -42,9 +42,10 @@ export const initializeDatabase = async (pool: mysql.Pool) => {
     console.log('📝 Creating tables...');
     
     // Change from 'contacts' to 'sync_data' or vice versa
+// In initializeDatabase function
 await connection.query(`
   CREATE TABLE IF NOT EXISTS sync_data (
-    id VARCHAR(255) PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     status VARCHAR(50) NOT NULL,
