@@ -78,14 +78,17 @@ export class SyncEngine {
       const dbRow = dbMap.get(sheetRow.id);
 
       if (!dbRow) {
+        console.log(`[SyncEngine] Adding new row to DB: ${sheetRow.id} (${sheetRow.name})`);
         toAddInDb.push({
           ...sheetRow,
           last_updated_by: 'sheet',
         });
       } else {
         const winner = this.resolveConflict(sheetRow, dbRow);
-        
+        console.log(`[SyncEngine] Row ${sheetRow.id}: winner=${winner}, sheet_name=${sheetRow.name}, db_name=${dbRow.name}`);
+
         if (winner === 'sheet' && sheetRow.last_updated_by !== 'db') {
+          console.log(`[SyncEngine] Updating DB row ${sheetRow.id} from sheet`);
           toUpdateInDb.push({
             ...sheetRow,
             version: sheetRow.version + 1,
@@ -137,7 +140,7 @@ export class SyncEngine {
     const sheetTime = new Date(sheetRow.updated_at).getTime();
     const dbTime = new Date(dbRow.updated_at).getTime();
 
-    if (Math.abs(sheetTime - dbTime) < 1000) {
+    if (Math.abs(sheetTime - dbTime) < 5000) {
       return sheetRow.version > dbRow.version ? 'sheet' : 'db';
     }
 

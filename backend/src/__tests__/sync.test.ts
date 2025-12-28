@@ -349,3 +349,4 @@ describe('Sync Statistics', () => {
     expect(successRate).toBeGreaterThan(95);
   });
 });
+});

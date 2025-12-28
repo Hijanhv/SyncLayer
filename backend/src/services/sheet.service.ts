@@ -26,15 +26,18 @@ export class SheetService {
   }
 
   private parseSheetRow(row: any[]): SyncRow {
-    return {
-      id: row[0] || '',
-      name: row[1] || '',
-      email: row[2] || '',
-      status: row[3] || '',
+    const parsed = {
+      id: String(row[0] || '').trim(),
+      name: String(row[1] || '').trim(),
+      email: String(row[2] || '').trim(),
+      status: String(row[3] || 'active').trim(),
       version: parseInt(row[4] || '1'),
       updated_at: row[5] || new Date().toISOString(),
       last_updated_by: (row[6] === 'db' ? 'db' : 'sheet') as 'sheet' | 'db',
     };
+
+    console.log(`[SheetService] Parsed row: ${parsed.id} | ${parsed.name} | ${parsed.email}`);
+    return parsed;
   }
 
   async updateRows(rows: SyncRow[]): Promise<void> {
