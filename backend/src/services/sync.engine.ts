@@ -130,8 +130,11 @@ export class SyncEngine {
     }
 
     // Force update if DB has empty/missing critical data but sheet has data
-    const dbHasEmptyData = !dbRow.name || !dbRow.email || dbRow.name.trim() === '' || dbRow.email.trim() === '';
-    const sheetHasData = sheetRow.name && sheetRow.email && sheetRow.name.trim() !== '' && sheetRow.email.trim() !== '';
+    const dbHasEmptyData = !dbRow.name || !dbRow.email ||
+                          (dbRow.name && dbRow.name.trim() === '') ||
+                          (dbRow.email && dbRow.email.trim() === '');
+    const sheetHasData = sheetRow.name && sheetRow.email &&
+                        sheetRow.name.trim() !== '' && sheetRow.email.trim() !== '';
 
     if (dbHasEmptyData && sheetHasData) {
       console.log(`[SyncEngine] Forcing sheet->DB update for row ${sheetRow.id} (DB has empty data)`);
